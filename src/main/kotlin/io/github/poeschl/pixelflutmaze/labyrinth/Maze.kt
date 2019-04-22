@@ -15,8 +15,6 @@ class Maze(private val origin: Point, val mazeSize: Pair<Int, Int>) {
         private const val PATH_SIZE = 16
         private const val BORDER_WIDTH = 1
         private val WALL_COLOR = Color.WHITE
-        private val START_COLOR = Color.CYAN
-        private val END_COLOR = Color.MAGENTA
 
         const val CELL_SIZE = PATH_SIZE + BORDER_WIDTH * 2
     }
@@ -56,21 +54,6 @@ class Maze(private val origin: Point, val mazeSize: Pair<Int, Int>) {
                     .parallel()
                     .mapToObj { y -> createHorizontalPixels(Point(0, y * CELL_SIZE), mazeSize.first, WALL_COLOR) }
                     .flatMap { it.parallelStream() }
-                    .forEach { shadowMatrix.insert(it) }
-            }
-            launch {
-                createRectPixels(Point(BORDER_WIDTH, BORDER_WIDTH), Pair(PATH_SIZE + 1, PATH_SIZE + 1), START_COLOR)
-                    .parallelStream()
-                    .forEach { shadowMatrix.insert(it) }
-            }
-            launch {
-                createRectPixels(
-                    Point(mazeSize.first - CELL_SIZE, mazeSize.second - CELL_SIZE)
-                        .plus(Point(BORDER_WIDTH, BORDER_WIDTH)),
-                    Pair(PATH_SIZE + 1, PATH_SIZE + 1),
-                    END_COLOR
-                )
-                    .parallelStream()
                     .forEach { shadowMatrix.insert(it) }
             }
         }
