@@ -39,9 +39,9 @@ class LabyrinthDrawer(
 
     private val drawInterface = PixelFlutInterface(host, port)
     private val daemonTimer = Timer(true)
-    private val areaSize = Pair(width, height)
-    private val areaOrigin = Point(xStart, yStart)
-    private val maze = Maze(areaOrigin, areaSize)
+    private val size = Pair(width, height)
+    private val origin = Point(xStart, yStart)
+    private val maze = Maze(origin, size)
 
     private var genTimer: TimerTask? = null
 
@@ -62,24 +62,24 @@ class LabyrinthDrawer(
     }
 
     private fun generateMazePixels() {
-        print("Update Maze...")
+        print("\nUpdate Maze...")
         val genMilli = measureTimeMillis {
-            val mazeGrid = createNewMazeGrid(MAZE_START, maze.mazeCellSize)
+            val mazeGrid = createNewMazeGrid()
             print("Redraw Maze...")
             maze.clear()
-            drawRect(drawInterface, areaOrigin, areaSize, Color.BLACK)
+            drawRect(drawInterface, origin, size, Color.BLACK)
             maze.updateMaze(mazeGrid.edges())
         }
         println("Maze updated in $genMilli ms")
     }
 
-    private fun createNewMazeGrid(start: Point, size: Pair<Int, Int>): GridGraph<TraversalState, Int> {
+    private fun createNewMazeGrid(): GridGraph<TraversalState, Int> {
         val grid = GridFactory.emptyGrid(
-            size.first, size.second, Top4.get(),
+            maze.widthInCells, maze.heightInCells, Top4.get(),
             TraversalState.UNVISITED, 0
         )
         val mazeGen = GrowingTreeAlwaysRandom(grid)
-        mazeGen.createMaze(start.x, start.y)
+        mazeGen.createMaze(MAZE_START.x, MAZE_START.y)
         return grid
     }
 

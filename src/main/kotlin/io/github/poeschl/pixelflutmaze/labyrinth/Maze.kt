@@ -8,7 +8,7 @@ import java.awt.Color
 import java.util.stream.IntStream
 import java.util.stream.Stream
 
-class Maze(private val origin: Point, val mazeCellSize: Pair<Int, Int>) {
+class Maze(private val origin: Point, val mazeSize: Pair<Int, Int>) {
 
     companion object {
         private const val DEBUG = false
@@ -21,17 +21,17 @@ class Maze(private val origin: Point, val mazeCellSize: Pair<Int, Int>) {
         const val CELL_SIZE = PATH_SIZE + BORDER_WIDTH * 2
     }
 
-    private val fullWidth = CELL_SIZE * mazeCellSize.first
-    private val fullHeight = CELL_SIZE * mazeCellSize.second
+    val widthInCells = mazeSize.first / CELL_SIZE
+    val heightInCells = mazeSize.second / CELL_SIZE
 
-    private var shadowMatrix = PixelMatrix(fullWidth, fullHeight)
+    private var shadowMatrix = PixelMatrix(mazeSize.first, mazeSize.second)
     private var mazeSet = setOf<Pixel>()
 
     fun updateMaze(edges: Stream<Edge>) {
         createGrid()
         edges.parallel().forEach { createEdges(it) }
         mazeSet = shadowMatrix.getPixelSet().map { Pixel(it.point.plus(origin), it.color) }.toSet()
-        shadowMatrix = PixelMatrix(fullWidth, fullHeight)
+        shadowMatrix = PixelMatrix(widthInCells, heightInCells)
     }
 
     fun draw(drawInterface: PixelFlutInterface) {
@@ -45,16 +45,16 @@ class Maze(private val origin: Point, val mazeCellSize: Pair<Int, Int>) {
     private fun createGrid() {
         runBlocking {
             launch {
-                IntStream.rangeClosed(0, mazeCellSize.first)
+                IntStream.rangeClosed(0, widthInCells)
                     .parallel()
-                    .mapToObj { x -> createVerticalPixels(Point(x * CELL_SIZE, 0), fullHeight, WALL_COLOR) }
+                    .mapToObj { x -> createVerticalPixels(Point(x * CELL_SIZE, 0), mazeSize.second, WALL_COLOR) }
                     .flatMap { it.parallelStream() }
                     .forEach { shadowMatrix.insert(it) }
             }
             launch {
-                IntStream.rangeClosed(0, mazeCellSize.second)
+                IntStream.rangeClosed(0, heightInCells)
                     .parallel()
-                    .mapToObj { y -> createHorizontalPixels(Point(0, y * CELL_SIZE), fullWidth, WALL_COLOR) }
+                    .mapToObj { y -> createHorizontalPixels(Point(0, y * CELL_SIZE), mazeSize.first, WALL_COLOR) }
                     .flatMap { it.parallelStream() }
                     .forEach { shadowMatrix.insert(it) }
             }
@@ -65,7 +65,7 @@ class Maze(private val origin: Point, val mazeCellSize: Pair<Int, Int>) {
             }
             launch {
                 createRectPixels(
-                    Point(fullWidth - CELL_SIZE, fullHeight - CELL_SIZE)
+                    Point(mazeSize.first - CELL_SIZE, mazeSize.second - CELL_SIZE)
                         .plus(Point(BORDER_WIDTH, BORDER_WIDTH)),
                     Pair(PATH_SIZE + 1, PATH_SIZE + 1),
                     END_COLOR
@@ -107,8 +107,8 @@ class Maze(private val origin: Point, val mazeCellSize: Pair<Int, Int>) {
     }
 
     private fun getOriginPointOfCell(index: Int): Point {
-        val y = (index / mazeCellSize.first) * CELL_SIZE
-        val x = (index % mazeCellSize.first) * CELL_SIZE
+        val y = (index / heightInCells) * CELL_SIZE
+        val x = (index % widthInCells) * CELL_SIZE
         return Point(x, y)
     }
 }
