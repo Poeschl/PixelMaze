@@ -19,36 +19,26 @@ import kotlin.system.measureTimeMillis
 fun main(args: Array<String>) {
     ArgParser(args).parseInto(::Args).run {
         println("Start drawing on $host:$port")
-        LabyrinthDrawer(host, port).start()
+        LabyrinthDrawer(host, port, x, y, width, height).start()
     }
 }
 
-class LabyrinthDrawer(host: String, port: Int) : Painter() {
+class LabyrinthDrawer(host: String, port: Int, xStart: Int, yStart: Int, width: Int, height: Int) : Painter() {
     companion object {
 
-        private const val SPLIT_COUNT = 3
-        private val MAZE_CELL = Point(1, 1)
         private val MAZE_START = Point(0, 0)
     }
 
     private val drawInterface = PixelFlutInterface(host, port)
-    private val displaySize = drawInterface.getPlaygroundSize()
     private val daemonTimer = Timer(true)
+    private val areaSize = Pair(width, height)
+    private val areaOrigin = Point(xStart, yStart)
+    private val maze = Maze(areaOrigin, areaSize)
 
-    private lateinit var areaSize: Pair<Int, Int>
-    private lateinit var areaOrigin: Point
-    private lateinit var maze: Maze
     private var genTimer: TimerTask? = null
 
     override fun init() {
-        initDimenstions()
         generateMazePixels()
-    }
-
-    override fun displayHelp() {
-        super.displayHelp()
-        println("generate -> Generate a new maze")
-        println("timer <delay> -> Set a delay for auto-generation in minutes. Use 0 or any negative value to disable.")
     }
 
     override fun render() {
@@ -58,39 +48,6 @@ class LabyrinthDrawer(host: String, port: Int) : Painter() {
     override fun afterStop() {
         drawInterface.close()
         daemonTimer.cancel()
-    }
-
-    override fun handleInput(input: String) {
-        when {
-            input == "generate" -> generateMazePixels()
-            input.startsWith("timer") && input.split(' ').size == 2 -> {
-                val delay = input.split(' ')[1].toLong()
-                setTimerTime(delay)
-            }
-            else -> println("Not recognized command!")
-        }
-    }
-
-    private fun initDimenstions() {
-        println("Detected size $displaySize")
-
-        val sizeX = (displaySize.first / SPLIT_COUNT)
-        val sizeY = (displaySize.second / SPLIT_COUNT)
-
-        val maxCellSize = Pair((sizeX / Maze.CELL_SIZE) - 1, (sizeY / Maze.CELL_SIZE) - 1)
-        val centerOffset = Point(
-            (sizeX - (maxCellSize.first * Maze.CELL_SIZE)) / 2,
-            (sizeY - (maxCellSize.second * Maze.CELL_SIZE)) / 2
-        )
-
-        areaOrigin = Point(sizeX * MAZE_CELL.x, sizeY * MAZE_CELL.y)
-        areaSize = Pair(sizeX, sizeY)
-
-        val mazeOrigin = areaOrigin.plus(centerOffset)
-
-        println("Maze Origin: $mazeOrigin")
-        println("Maze Size (cells): $maxCellSize")
-        maze = Maze(mazeOrigin, maxCellSize)
     }
 
     private fun generateMazePixels() {
@@ -106,8 +63,10 @@ class LabyrinthDrawer(host: String, port: Int) : Painter() {
     }
 
     private fun createNewMazeGrid(start: Point, size: Pair<Int, Int>): GridGraph<TraversalState, Int> {
-        val grid = GridFactory.emptyGrid(size.first, size.second, Top4.get(),
-            TraversalState.UNVISITED, 0)
+        val grid = GridFactory.emptyGrid(
+            size.first, size.second, Top4.get(),
+            TraversalState.UNVISITED, 0
+        )
         val mazeGen = GrowingTreeAlwaysRandom(grid)
         mazeGen.createMaze(start.x, start.y)
         return grid
@@ -130,4 +89,8 @@ class LabyrinthDrawer(host: String, port: Int) : Painter() {
 class Args(parser: ArgParser) {
     val host by parser.storing("--host", help = "The host of the pixelflut server").default("localhost")
     val port by parser.storing("-p", "--port", help = "The port of the server") { toInt() }.default(1234)
+    val x by parser.storing("-x", help = "The x start position") { toInt() }.default(0)
+    val y by parser.storing("-y", help = "The y start position") { toInt() }.default(0)
+    val width by parser.storing("--width", help = "The maze width") { toInt() }.default(500)
+    val height by parser.storing("--height", help = "The maze height") { toInt() }.default(500)
 }
