@@ -10,7 +10,7 @@ import java.util.stream.Stream
 
 class Maze(
     private val origin: Point,
-    mazeSize: Pair<Int, Int>,
+    private val mazeSize: Pair<Int, Int>,
     private val pathSize: Int
 ) {
 
@@ -31,7 +31,7 @@ class Maze(
         createGrid()
         edges.parallel().forEach { createEdges(it) }
         mazeSet = shadowMatrix.getPixelSet().map { Pixel(it.point.plus(origin), it.color) }.toSet()
-        shadowMatrix = PixelMatrix(widthInCells, heightInCells)
+        shadowMatrix = PixelMatrix(mazeSize.first, mazeSize.second)
     }
 
     fun draw(drawInterface: PixelFlutInterface) {
@@ -46,11 +46,11 @@ class Maze(
         runBlocking {
             launch {
                 IntStream.rangeClosed(0, widthInCells)
-                    .parallel()
+                    //.parallel()
                     .mapToObj { x ->
                         createVerticalPixels(
                             Point(x * cellSize, 0),
-                            heightInCells * cellSize,
+                            heightInCells * (cellSize - BORDER_WIDTH),
                             WALL_COLOR
                         )
                     }
@@ -59,11 +59,11 @@ class Maze(
             }
             launch {
                 IntStream.rangeClosed(0, heightInCells)
-                    .parallel()
+                    //.parallel()
                     .mapToObj { y ->
                         createHorizontalPixels(
                             Point(0, y * cellSize),
-                            widthInCells * cellSize,
+                            widthInCells * (cellSize - BORDER_WIDTH),
                             WALL_COLOR
                         )
                     }
