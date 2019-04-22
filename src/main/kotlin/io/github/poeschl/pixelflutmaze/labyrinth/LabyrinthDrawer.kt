@@ -19,11 +19,19 @@ import kotlin.system.measureTimeMillis
 fun main(args: Array<String>) {
     ArgParser(args).parseInto(::Args).run {
         println("Start drawing on $host:$port")
-        LabyrinthDrawer(host, port, x, y, width, height).start()
+        LabyrinthDrawer(host, port, x, y, width, height, timer).start()
     }
 }
 
-class LabyrinthDrawer(host: String, port: Int, xStart: Int, yStart: Int, width: Int, height: Int) : Painter() {
+class LabyrinthDrawer(
+    host: String,
+    port: Int,
+    xStart: Int,
+    yStart: Int,
+    width: Int,
+    height: Int,
+    private val timer: Long
+) : Painter() {
     companion object {
 
         private val MAZE_START = Point(0, 0)
@@ -39,6 +47,9 @@ class LabyrinthDrawer(host: String, port: Int, xStart: Int, yStart: Int, width: 
 
     override fun init() {
         generateMazePixels()
+        if (timer > 0) {
+            setTimerTime(timer)
+        }
     }
 
     override fun render() {
@@ -72,16 +83,16 @@ class LabyrinthDrawer(host: String, port: Int, xStart: Int, yStart: Int, width: 
         return grid
     }
 
-    private fun setTimerTime(delayMinutes: Long) {
+    private fun setTimerTime(delaySeconds: Long) {
 
-        if (delayMinutes < 1) {
+        if (delaySeconds < 1) {
             genTimer?.cancel()
             println("Disabled timer")
         } else {
             genTimer?.cancel()
-            val delayseconds = delayMinutes * 60 * 1000
-            genTimer = daemonTimer.schedule(delayseconds, delayseconds) { generateMazePixels() }
-            println("Set timer to a period of $delayMinutes minute")
+            val millis = delaySeconds * 1000
+            genTimer = daemonTimer.schedule(millis, millis) { generateMazePixels() }
+            println("Set timer to a period of $delaySeconds seconds")
         }
     }
 }
@@ -89,8 +100,12 @@ class LabyrinthDrawer(host: String, port: Int, xStart: Int, yStart: Int, width: 
 class Args(parser: ArgParser) {
     val host by parser.storing("--host", help = "The host of the pixelflut server").default("localhost")
     val port by parser.storing("-p", "--port", help = "The port of the server") { toInt() }.default(1234)
-    val x by parser.storing("-x", help = "The x start position") { toInt() }.default(0)
-    val y by parser.storing("-y", help = "The y start position") { toInt() }.default(0)
-    val width by parser.storing("--width", help = "The maze width") { toInt() }.default(500)
-    val height by parser.storing("--height", help = "The maze height") { toInt() }.default(500)
+    val x by parser.storing("-x", help = "The x start position") { Math.max(toInt(), 0) }.default(0)
+    val y by parser.storing("-y", help = "The y start position") { Math.max(toInt(), 0) }.default(0)
+    val width by parser.storing("--width", help = "The maze width") { Math.max(toInt(), 1) }.default(500)
+    val height by parser.storing("--height", help = "The maze height") { Math.max(toInt(), 1) }.default(500)
+    val timer by parser.storing(
+        "-t", "--timer",
+        help = "Enable the regen of the maze after the value specified in seconds"
+    ) { toLong() }.default(-1)
 }
