@@ -11,4 +11,32 @@ To setup the project make sure you have Java (`> 8`) installed then run `.\gradl
 
 # How to use
 
-TBD
+The build jar can be parameterized with following parameters (can also be shown with `-h` or `--help`)
+
+```bash
+usage: [-h] [--host HOST] [-p PORT] [-x X] [-y Y] [--width WIDTH]
+       [--height HEIGHT] [-t TIMER] [--blank] [-c CELLSIZE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+  --host HOST           The host of the pixelflut server
+
+  -p PORT, --port PORT  The port of the server
+
+  -x X                  The x start position
+
+  -y Y                  The y start position
+
+  --width WIDTH         The maze width in pixel
+
+  --height HEIGHT       The maze height in pixel
+
+  -t TIMER,             Enable the regen of the maze after the value specified
+  --timer TIMER         in seconds
+
+  --blank               Enables blanking before redraw
+
+  -c CELLSIZE,          The size inside a maze cell
+  --cellsize CELLSIZE
+```

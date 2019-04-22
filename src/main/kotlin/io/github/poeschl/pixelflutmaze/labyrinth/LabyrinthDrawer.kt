@@ -2,6 +2,7 @@ package io.github.poeschl.pixelflutmaze.labyrinth
 
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
+import com.xenomachina.argparser.mainBody
 import de.amr.graph.core.api.TraversalState
 import de.amr.graph.grid.impl.GridFactory
 import de.amr.graph.grid.impl.GridGraph
@@ -16,7 +17,7 @@ import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.system.measureTimeMillis
 
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = mainBody {
     ArgParser(args).parseInto(::Args).run {
         println("Start drawing on $host:$port")
         LabyrinthDrawer(host, port, x, y, width, height, timer, blanking, cellSize).start()
@@ -107,8 +108,8 @@ class Args(parser: ArgParser) {
     val port by parser.storing("-p", "--port", help = "The port of the server") { toInt() }.default(1234)
     val x by parser.storing("-x", help = "The x start position") { Math.max(toInt(), 0) }.default(0)
     val y by parser.storing("-y", help = "The y start position") { Math.max(toInt(), 0) }.default(0)
-    val width by parser.storing("--width", help = "The maze width") { Math.max(toInt(), 1) }.default(500)
-    val height by parser.storing("--height", help = "The maze height") { Math.max(toInt(), 1) }.default(500)
+    val width by parser.storing("--width", help = "The maze width in pixel") { Math.max(toInt(), 1) }.default(500)
+    val height by parser.storing("--height", help = "The maze height in pixel") { Math.max(toInt(), 1) }.default(500)
     val timer by parser.storing(
         "-t", "--timer",
         help = "Enable the regen of the maze after the value specified in seconds"
