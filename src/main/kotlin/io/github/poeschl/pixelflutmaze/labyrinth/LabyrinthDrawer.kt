@@ -19,7 +19,7 @@ import kotlin.system.measureTimeMillis
 fun main(args: Array<String>) {
     ArgParser(args).parseInto(::Args).run {
         println("Start drawing on $host:$port")
-        LabyrinthDrawer(host, port, x, y, width, height, timer).start()
+        LabyrinthDrawer(host, port, x, y, width, height, timer, blanking).start()
     }
 }
 
@@ -30,7 +30,8 @@ class LabyrinthDrawer(
     yStart: Int,
     width: Int,
     height: Int,
-    private val timer: Long
+    private val timer: Long,
+    private val blanking: Boolean
 ) : Painter() {
     companion object {
 
@@ -67,10 +68,13 @@ class LabyrinthDrawer(
             val mazeGrid = createNewMazeGrid()
             print("Redraw Maze...")
             maze.clear()
-            drawRect(drawInterface, origin, size, Color.BLACK)
+            if (blanking) {
+                drawRect(drawInterface, origin, size, Color.BLACK)
+            }
             maze.updateMaze(mazeGrid.edges())
         }
         println("Maze updated in $genMilli ms")
+
     }
 
     private fun createNewMazeGrid(): GridGraph<TraversalState, Int> {
@@ -108,4 +112,5 @@ class Args(parser: ArgParser) {
         "-t", "--timer",
         help = "Enable the regen of the maze after the value specified in seconds"
     ) { toLong() }.default(-1)
+    val blanking by parser.flagging("--blank", help = "Enables blanking before redraw").default(false)
 }
