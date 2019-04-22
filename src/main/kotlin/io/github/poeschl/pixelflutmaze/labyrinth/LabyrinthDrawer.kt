@@ -19,7 +19,7 @@ import kotlin.system.measureTimeMillis
 fun main(args: Array<String>) {
     ArgParser(args).parseInto(::Args).run {
         println("Start drawing on $host:$port")
-        LabyrinthDrawer(host, port, x, y, width, height, timer, blanking).start()
+        LabyrinthDrawer(host, port, x, y, width, height, timer, blanking, cellSize).start()
     }
 }
 
@@ -31,7 +31,8 @@ class LabyrinthDrawer(
     width: Int,
     height: Int,
     private val timer: Long,
-    private val blanking: Boolean
+    private val blanking: Boolean,
+    cellSize: Int
 ) : Painter() {
     companion object {
 
@@ -42,7 +43,7 @@ class LabyrinthDrawer(
     private val daemonTimer = Timer(true)
     private val size = Pair(width, height)
     private val origin = Point(xStart, yStart)
-    private val maze = Maze(origin, size)
+    private val maze = Maze(origin, size, cellSize)
 
     private var genTimer: TimerTask? = null
 
@@ -113,4 +114,5 @@ class Args(parser: ArgParser) {
         help = "Enable the regen of the maze after the value specified in seconds"
     ) { toLong() }.default(-1)
     val blanking by parser.flagging("--blank", help = "Enables blanking before redraw").default(false)
+    val cellSize by parser.storing("-c", "--cellsize", help = "The size inside a maze cell") { toInt() }.default(8)
 }
