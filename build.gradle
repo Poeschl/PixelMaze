@@ -1,53 +1,59 @@
 buildscript {
     repositories {
-        jcenter()
         mavenCentral()
     }
 }
 
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.20'
+    id "org.jetbrains.kotlin.jvm" version "1.6.10"
     id 'idea'
-    id 'com.github.johnrengelman.shadow' version '4.0.3'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'net.researchgate.release' version '2.8.1'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-
-wrapper {
-    distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = '5.4'
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
-}
-
-test {
-    useJUnitPlatform()
-    testLogging {
-        events "failed"
-    }
-}
-
-jar {
-    manifest {
-        attributes 'Main-Class': 'io.github.poeschl.pixelflutmaze.labyrinth.LabyrinthDrawerKt'
-    }
-}
+sourceCompatibility = JavaVersion.VERSION_15
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1"
-    
-    compile 'com.xenomachina:kotlin-argparser:2.0.7'
-    compile files('libs/SwingMazeDemo-0.0.1-SNAPSHOT-jar-with-dependencies.jar')
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
+    implementation 'com.xenomachina:kotlin-argparser:2.0.7'
+    implementation files('libs/SwingMazeDemo-0.0.1-SNAPSHOT-jar-with-dependencies.jar')
+}
+
+
+compileKotlin {
+    kotlinOptions.jvmTarget = project.sourceCompatibility
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = project.sourceCompatibility
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'xyz.poeschl.pixelmaze.MazeDrawerKt'
+    }
+}
+
+shadowJar {
+    archiveClassifier.set('')
+}
+
+import java.util.regex.Matcher
+
+release {
+    buildTasks = []
+    preTagCommitMessage = ':bookmark: pre tag commit: '
+    tagCommitMessage = ':bookmark: creating tag: '
+    newVersionCommitMessage = ':bookmark: new version commit: '
+    git {
+        requireBranch = 'master'
+    }
+    versionPatterns = [
+            /(\d+)\.(\d+)\.(\d+)([^\d]*$)/: { Matcher m, Project p -> m.replaceAll("${m[0][1]}.${(m[0][2] as int) + 1}.${m[0][3]}${m[0][4]}") }
+    ]
 }

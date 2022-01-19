@@ -1,7 +1,7 @@
-package io.github.poeschl.pixelflutmaze.labyrinth
+package xyz.poeschl.pixelmaze
 
-import io.github.poeschl.pixelflutmaze.shared.Pixel
-import io.github.poeschl.pixelflutmaze.shared.Point
+import xyz.poeschl.pixelmaze.shared.Pixel
+import xyz.poeschl.pixelmaze.shared.Point
 
 class PixelMatrix(private val xSize: Int, private val ySize: Int) {
 

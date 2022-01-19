@@ -1,9 +1,9 @@
-package io.github.poeschl.pixelflutmaze.labyrinth
+package xyz.poeschl.pixelmaze
 
 import de.amr.graph.core.api.Edge
-import io.github.poeschl.pixelflutmaze.shared.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import xyz.poeschl.pixelmaze.shared.*
 import java.awt.Color
 import java.util.stream.IntStream
 import java.util.stream.Stream

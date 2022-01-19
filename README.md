@@ -11,9 +11,17 @@ To setup the project make sure you have Java (`> 8`) installed then run `.\gradl
 
 # How to use
 
-The build jar can be parameterized with following parameters (can also be shown with `-h` or `--help`)
+Download the artefact for a fixed version or use the provided docker images.
 
-```bash
+```shell
+java -jar pixelflut-pixelmaze-*.jar
+# or docker
+docker run -it --rm ghcr.io/poeschl/pixelmaze
+```
+
+The PixelMaze application can be parameterized with following parameters (can also be shown with `-h` or `--help`)
+
+```shell
 usage: [-h] [--host HOST] [-p PORT] [-x X] [-y Y] [--width WIDTH]
        [--height HEIGHT] [-t TIMER] [--blank] [-c CELLSIZE]
 

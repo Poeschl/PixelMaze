@@ -21,7 +21,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifact
-          path: build/libs/pixelflut-pixelmaze-*.jar
+          path: build/libs/PixelMaze-*.jar
 
   image:
     name: Build Docker release
@@ -78,4 +78,4 @@ jobs:
           uses: softprops/action-gh-release@v1
           with:
             files: |
-              build/libs/pixelflut-pixelmaze-*.jar
+              build/libs/PixelMaze-*.jar

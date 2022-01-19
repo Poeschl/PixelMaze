@@ -1,4 +1,4 @@
-package io.github.poeschl.pixelflutmaze.labyrinth
+package xyz.poeschl.pixelmaze
 
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
@@ -8,10 +8,10 @@ import de.amr.graph.grid.impl.GridFactory
 import de.amr.graph.grid.impl.GridGraph
 import de.amr.graph.grid.impl.Top4
 import de.amr.maze.alg.traversal.GrowingTreeAlwaysRandom
-import io.github.poeschl.pixelflutmaze.shared.Painter
-import io.github.poeschl.pixelflutmaze.shared.PixelFlutInterface
-import io.github.poeschl.pixelflutmaze.shared.Point
-import io.github.poeschl.pixelflutmaze.shared.drawRect
+import xyz.poeschl.pixelmaze.shared.Painter
+import xyz.poeschl.pixelmaze.shared.PixelFlutInterface
+import xyz.poeschl.pixelmaze.shared.Point
+import xyz.poeschl.pixelmaze.shared.drawRect
 import java.awt.Color
 import java.util.*
 import kotlin.concurrent.schedule

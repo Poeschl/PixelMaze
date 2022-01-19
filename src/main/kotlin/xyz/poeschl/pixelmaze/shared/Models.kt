@@ -1,4 +1,4 @@
-package io.github.poeschl.pixelflutmaze.shared
+package xyz.poeschl.pixelmaze.shared
 
 import java.awt.Color
 
