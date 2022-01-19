@@ -8,10 +8,10 @@ import de.amr.graph.grid.impl.GridFactory
 import de.amr.graph.grid.impl.GridGraph
 import de.amr.graph.grid.impl.Top4
 import de.amr.maze.alg.traversal.GrowingTreeAlwaysRandom
-import xyz.poeschl.pixelmaze.shared.Painter
-import xyz.poeschl.pixelmaze.shared.PixelFlutInterface
-import xyz.poeschl.pixelmaze.shared.Point
-import xyz.poeschl.pixelmaze.shared.drawRect
+import xyz.poeschl.kixelflut.Painter
+import xyz.poeschl.kixelflut.Pixelflut
+import xyz.poeschl.kixelflut.Point
+import xyz.poeschl.kixelflut.createRectPixels
 import java.awt.Color
 import java.util.*
 import kotlin.concurrent.schedule
@@ -40,7 +40,7 @@ class LabyrinthDrawer(
         private val MAZE_START = Point(0, 0)
     }
 
-    private val drawInterface = PixelFlutInterface(host, port)
+    private val drawInterface = Pixelflut(host, port)
     private val daemonTimer = Timer(true)
     private val size = Pair(width, height)
     private val origin = Point(xStart, yStart)
@@ -71,7 +71,8 @@ class LabyrinthDrawer(
             print("Redraw Maze...")
             maze.clear()
             if (blanking) {
-                drawRect(drawInterface, origin, size, Color.BLACK)
+                val pixels = createRectPixels(origin, size, Color.BLACK)
+                drawInterface.drawPixels(pixels)
             }
             maze.updateMaze(mazeGrid.edges())
         }

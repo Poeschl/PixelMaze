@@ -3,7 +3,7 @@ package xyz.poeschl.pixelmaze
 import de.amr.graph.core.api.Edge
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import xyz.poeschl.pixelmaze.shared.*
+import xyz.poeschl.kixelflut.*
 import java.awt.Color
 import java.util.stream.IntStream
 import java.util.stream.Stream
@@ -34,8 +34,8 @@ class Maze(
         shadowMatrix = PixelMatrix(mazeSize.first, mazeSize.second)
     }
 
-    fun draw(drawInterface: PixelFlutInterface) {
-        drawInterface.paintPixelSet(mazeSet)
+    fun draw(drawInterface: Pixelflut) {
+        drawInterface.drawPixels(mazeSet)
     }
 
     fun clear() {

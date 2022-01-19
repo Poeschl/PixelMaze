@@ -1,7 +1,7 @@
 package xyz.poeschl.pixelmaze
 
-import xyz.poeschl.pixelmaze.shared.Pixel
-import xyz.poeschl.pixelmaze.shared.Point
+import xyz.poeschl.kixelflut.Pixel
+import xyz.poeschl.kixelflut.Point
 
 class PixelMatrix(private val xSize: Int, private val ySize: Int) {
 
