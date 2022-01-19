@@ -1,20 +1,21 @@
 # PixelMaze
 
-A maze drawer for the pixelflut protocol.
+A maze drawer for the Pixelflut protocol.
 
-This project is extracted from the [HacktoberfestMunich/Pixelflut](https://github.com/HacktoberfestMunich/Pixelflut) repository to give it a better place. 
-For the maze generation it uses the generator from [armin-reichert/mazes](https://github.com/armin-reichert/mazes).
+It draws a randomly generated "perfect" maze on an Pixelflut Canvas. All mazes can be solved and if wanted the maze can
+be periodically refreshed.
 
-# Setup project
-
-To setup the project make sure you have Java (`> 8`) installed then run `.\gradlew build shadowJar` inside the project folder to generate a executable jar.
+This project is based on the [HacktoberfestMunich/Pixelflut](https://github.com/HacktoberfestMunich/Pixelflut)
+repository. It's now on its own for better maintainability and all dependencies were updated to the latest version. For
+the maze generation it uses the generator from [armin-reichert/mazes](https://github.com/armin-reichert/mazes).
 
 # How to use
 
-Download the artefact for a fixed version or use the provided docker images.
+The PixelMaze application is available as artefact over the releases or as docker image. If you are using the artifact
+make sure at least Java 15 is available on our system.
 
 ```shell
-java -jar pixelflut-pixelmaze-*.jar
+java -jar PixelMaze-<version>.jar
 # or docker
 docker run -it --rm ghcr.io/poeschl/pixelmaze
 ```
@@ -48,3 +49,8 @@ optional arguments:
   -c CELLSIZE,          The size inside a maze cell
   --cellsize CELLSIZE
 ```
+
+# Compile project
+
+To set up the project make sure you have Java (`> 15`) installed then run `.\gradlew shadowJar` inside the project
+folder to generate an executable jar.
