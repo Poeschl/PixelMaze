@@ -10,7 +10,6 @@ plugins {
     id 'idea'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'net.researchgate.release' version '2.8.1'
-    id "de.undercouch.download" version "5.0.1"
 }
 
 group 'xyz.poeschl.pixelmaze'
@@ -26,15 +25,9 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     implementation 'com.xenomachina:kotlin-argparser:2.0.7'
     implementation 'xyz.poeschl:Kixelflut:2.0.1'
-    implementation files("${buildDir}/dependencies/SwingMazeDemo-0.0.1-SNAPSHOT-jar-with-dependencies.jar")
+    implementation files("libs/armin-reichert_mazes-20200304.jar")
 }
 
-task downloadMazeLib(type: Download) {
-    src 'https://github.com/armin-reichert/mazes/releases/download/20200306/SwingMazeDemo-0.0.1-SNAPSHOT-jar-with-dependencies.jar'
-    dest "${buildDir}/dependencies/SwingMazeDemo-0.0.1-SNAPSHOT-jar-with-dependencies.jar"
-    overwrite false
-}
-compileKotlin.dependsOn('downloadMazeLib')
 
 compileKotlin {
     kotlinOptions.jvmTarget = project.sourceCompatibility
