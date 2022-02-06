@@ -7,6 +7,8 @@ import xyz.poeschl.kixelflut.*
 import java.awt.Color
 import java.util.stream.IntStream
 import java.util.stream.Stream
+import kotlin.math.max
+import kotlin.math.min
 
 class Maze(
     private val origin: Point,
@@ -46,11 +48,10 @@ class Maze(
         runBlocking {
             launch {
                 IntStream.rangeClosed(0, widthInCells)
-                    //.parallel()
                     .mapToObj { x ->
                         createVerticalPixels(
                             Point(x * cellSize, 0),
-                            heightInCells * (cellSize - BORDER_WIDTH),
+                            heightInCells * cellSize,
                             WALL_COLOR
                         )
                     }
@@ -59,11 +60,10 @@ class Maze(
             }
             launch {
                 IntStream.rangeClosed(0, heightInCells)
-                    //.parallel()
                     .mapToObj { y ->
                         createHorizontalPixels(
                             Point(0, y * cellSize),
-                            widthInCells * (cellSize - BORDER_WIDTH),
+                            widthInCells * cellSize,
                             WALL_COLOR
                         )
                     }
@@ -74,16 +74,16 @@ class Maze(
     }
 
     private fun createEdges(edge: Edge) {
-        val from = getOriginPointOfCell(Math.min(edge.either(), edge.other()))
-        val to = getOriginPointOfCell(Math.max(edge.either(), edge.other()))
+        val from = getOriginPointOfCell(min(edge.either(), edge.other()))
+        val to = getOriginPointOfCell(max(edge.either(), edge.other()))
 
         when {
-            from.x == to.x && from.y != to.y -> drawVerticalPathToBottom(from)
-            from.y == to.y && from.x != to.x -> removeVerticalBorderToRightOf(from)
+            from.x == to.x && from.y != to.y -> removeVerticalBorderToBottomOf(from)
+            from.y == to.y && from.x != to.x -> removeHorizontalBorderToRightOf(from)
         }
     }
 
-    private fun removeVerticalBorderToRightOf(from: Point) {
+    private fun removeVerticalBorderToBottomOf(from: Point) {
         for (yOffset in 0..pathSize) {
             val wallPoint = from.plus(Point(cellSize, BORDER_WIDTH + yOffset))
             shadowMatrix.remove(wallPoint)
@@ -93,7 +93,7 @@ class Maze(
         }
     }
 
-    private fun drawVerticalPathToBottom(from: Point) {
+    private fun removeHorizontalBorderToRightOf(from: Point) {
         for (xOffset in 0..pathSize) {
             val wallPoint = from.plus(Point(BORDER_WIDTH + xOffset, cellSize))
             shadowMatrix.remove(wallPoint)
