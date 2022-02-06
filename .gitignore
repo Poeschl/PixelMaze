@@ -43,4 +43,4 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 # Don't ignore maze lib dependency
-libs/armin-reichert_mazes-*.jar
+!libs/SwingMazeDemo-0.0.1-SNAPSHOT-jar-with-dependencies-*.jar
