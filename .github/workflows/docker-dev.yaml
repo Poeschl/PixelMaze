@@ -16,7 +16,7 @@ jobs:
           java-version: 15
           distribution: 'adopt'
       - name: Build PixelMaze
-        run: ./gradlew --stacktrace shadowJar
+        run: ./gradlew --stacktrace check shadowJar
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:

@@ -3,7 +3,10 @@ package xyz.poeschl.pixelmaze
 import de.amr.graph.core.api.Edge
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import xyz.poeschl.kixelflut.*
+import xyz.poeschl.kixelflut.Pixel
+import xyz.poeschl.kixelflut.Point
+import xyz.poeschl.kixelflut.createHorizontalPixels
+import xyz.poeschl.kixelflut.createVerticalPixels
 import java.awt.Color
 import java.util.stream.IntStream
 import java.util.stream.Stream
@@ -27,17 +30,13 @@ class Maze(
     val heightInCells = mazeSize.second / cellSize
 
     private var shadowMatrix = PixelMatrix(mazeSize.first, mazeSize.second)
-    private var mazeSet = setOf<Pixel>()
+    var mazeSet = setOf<Pixel>()
 
     fun updateMaze(edges: Stream<Edge>) {
         createGrid()
         edges.parallel().forEach { createEdges(it) }
         mazeSet = shadowMatrix.getPixelSet().map { Pixel(it.point.plus(origin), it.color) }.toSet()
         shadowMatrix = PixelMatrix(mazeSize.first, mazeSize.second)
-    }
-
-    fun draw(drawInterface: Pixelflut) {
-        drawInterface.drawPixels(mazeSet)
     }
 
     fun clear() {
@@ -78,8 +77,8 @@ class Maze(
         val to = getOriginPointOfCell(max(edge.either(), edge.other()))
 
         when {
-            from.x == to.x && from.y != to.y -> removeVerticalBorderToBottomOf(from)
-            from.y == to.y && from.x != to.x -> removeHorizontalBorderToRightOf(from)
+            from.x == to.x && from.y != to.y -> removeHorizontalBorderToRightOf(from)
+            from.y == to.y && from.x != to.x -> removeVerticalBorderToBottomOf(from)
         }
     }
 

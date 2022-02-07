@@ -56,7 +56,7 @@ class LabyrinthDrawer(
     }
 
     override fun render() {
-        maze.draw(drawInterface)
+        drawInterface.drawPixels(maze.mazeSet)
     }
 
     override fun afterStop() {
