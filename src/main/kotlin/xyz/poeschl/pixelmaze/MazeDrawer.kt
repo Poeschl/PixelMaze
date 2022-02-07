@@ -4,9 +4,9 @@ import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
 import com.xenomachina.argparser.mainBody
 import de.amr.graph.core.api.TraversalState
+import de.amr.graph.grid.impl.Grid4Topology
 import de.amr.graph.grid.impl.GridFactory
 import de.amr.graph.grid.impl.GridGraph
-import de.amr.graph.grid.impl.Top4
 import de.amr.maze.alg.traversal.GrowingTreeAlwaysRandom
 import mu.KotlinLogging
 import xyz.poeschl.kixelflut.Painter
@@ -83,7 +83,7 @@ class LabyrinthDrawer(
 
     private fun createNewMazeGrid(): GridGraph<TraversalState, Int> {
         val grid = GridFactory.emptyGrid(
-            maze.widthInCells, maze.heightInCells, Top4.get(),
+            maze.widthInCells, maze.heightInCells, Grid4Topology.get(),
             TraversalState.UNVISITED, 0
         )
         val mazeGen = GrowingTreeAlwaysRandom(grid)
