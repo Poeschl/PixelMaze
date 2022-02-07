@@ -8,6 +8,7 @@ import de.amr.graph.grid.impl.GridFactory
 import de.amr.graph.grid.impl.GridGraph
 import de.amr.graph.grid.impl.Top4
 import de.amr.maze.alg.traversal.GrowingTreeAlwaysRandom
+import mu.KotlinLogging
 import xyz.poeschl.kixelflut.Painter
 import xyz.poeschl.kixelflut.Pixelflut
 import xyz.poeschl.kixelflut.Point
@@ -36,7 +37,7 @@ class LabyrinthDrawer(
     cellSize: Int
 ) : Painter() {
     companion object {
-
+        private val LOGGER = KotlinLogging.logger { }
         private val MAZE_START = Point(0, 0)
     }
 
@@ -65,10 +66,10 @@ class LabyrinthDrawer(
     }
 
     private fun generateMazePixels() {
-        print("\nUpdate Maze...")
+        LOGGER.info { "Update Maze..." }
         val genMilli = measureTimeMillis {
             val mazeGrid = createNewMazeGrid()
-            print("Redraw Maze...")
+            LOGGER.info { "Redraw Maze..." }
             maze.clear()
             if (blanking) {
                 val pixels = createRectPixels(origin, size, Color.BLACK)
@@ -76,7 +77,7 @@ class LabyrinthDrawer(
             }
             maze.updateMaze(mazeGrid.edges())
         }
-        println("Maze updated in $genMilli ms")
+        LOGGER.info { "Maze updated in $genMilli ms" }
 
     }
 
@@ -94,12 +95,12 @@ class LabyrinthDrawer(
 
         if (delaySeconds < 1) {
             genTimer?.cancel()
-            println("Disabled timer")
+            LOGGER.info { "Disabled timer" }
         } else {
             genTimer?.cancel()
             val millis = delaySeconds * 1000
             genTimer = daemonTimer.schedule(millis, millis) { generateMazePixels() }
-            println("Set timer to a period of $delaySeconds seconds")
+            LOGGER.info { "Set timer to a period of $delaySeconds seconds" }
         }
     }
 }

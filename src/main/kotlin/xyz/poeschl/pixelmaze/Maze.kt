@@ -3,6 +3,7 @@ package xyz.poeschl.pixelmaze
 import de.amr.graph.core.api.Edge
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import mu.KotlinLogging
 import xyz.poeschl.kixelflut.Pixel
 import xyz.poeschl.kixelflut.Point
 import xyz.poeschl.kixelflut.createHorizontalPixels
@@ -20,7 +21,8 @@ class Maze(
 ) {
 
     companion object {
-        private const val DEBUG = false
+        private val VISUAL_LOGGER = KotlinLogging.logger("visualDebug")
+        private val DEBUG = VISUAL_LOGGER.isDebugEnabled
         private const val BORDER_WIDTH = 1
         private val WALL_COLOR = Color.WHITE
     }
