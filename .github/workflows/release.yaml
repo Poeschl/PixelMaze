@@ -18,7 +18,7 @@ jobs:
       - name: Package PixelMaze
         run: ./gradlew --stacktrace check shadowJar
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: artifact
           path: build/libs/PixelMaze-*.jar
