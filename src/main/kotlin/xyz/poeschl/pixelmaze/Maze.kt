@@ -105,7 +105,7 @@ class Maze(
     }
 
     private fun getOriginPointOfCell(index: Int): Point {
-        val y = (index / heightInCells) * cellSize
+        val y = (index / widthInCells) * cellSize
         val x = (index % widthInCells) * cellSize
         return Point(x, y)
     }
