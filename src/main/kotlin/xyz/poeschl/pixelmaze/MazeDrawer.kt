@@ -21,7 +21,7 @@ import kotlin.system.measureTimeMillis
 fun main(args: Array<String>) = mainBody {
   ArgParser(args).parseInto(::Args).run {
     println("Start drawing on $host:$port")
-    LabyrinthDrawer(host, port, x, y, width, height, timer, blanking, cellSize).start()
+    LabyrinthDrawer(host, port, x, y, width, height, timer, blanking, cellSize, drawMarker, centerTarget).start()
   }
 }
 
@@ -34,7 +34,9 @@ class LabyrinthDrawer(
   height: Int,
   private val timer: Long,
   private val blanking: Boolean,
-  cellSize: Int
+  cellSize: Int,
+  drawMarker: Boolean,
+  centerTarget: Boolean
 ) : Painter() {
   companion object {
     private val LOGGER = KotlinLogging.logger { }
@@ -45,11 +47,12 @@ class LabyrinthDrawer(
   private val daemonTimer = Timer(true)
   private val size = Pair(width, height)
   private val origin = Point(xStart, yStart)
-  private val maze = Maze(origin, size, cellSize)
+  private val maze = Maze(origin, size, cellSize, drawMarker, centerTarget)
 
   private var genTimer: TimerTask? = null
 
   override fun init() {
+    LOGGER.info { }
     generateMazePixels()
     if (timer > 0) {
       setTimerTime(timer)
@@ -108,14 +111,16 @@ class LabyrinthDrawer(
 class Args(parser: ArgParser) {
   val host by parser.storing("--host", help = "The host of the pixelflut server").default("localhost")
   val port by parser.storing("-p", "--port", help = "The port of the server") { toInt() }.default(1234)
-  val x by parser.storing("-x", help = "The x start position") { Math.max(toInt(), 0) }.default(0)
-  val y by parser.storing("-y", help = "The y start position") { Math.max(toInt(), 0) }.default(0)
-  val width by parser.storing("--width", help = "The maze width in pixel") { Math.max(toInt(), 1) }.default(500)
-  val height by parser.storing("--height", help = "The maze height in pixel") { Math.max(toInt(), 1) }.default(500)
+  val x by parser.storing("-x", help = "The x start position") { toInt().coerceAtLeast(0) }.default(0)
+  val y by parser.storing("-y", help = "The y start position") { toInt().coerceAtLeast(0) }.default(0)
+  val width by parser.storing("--width", help = "The maze width in pixel") { toInt().coerceAtLeast(1) }.default(500)
+  val height by parser.storing("--height", help = "The maze height in pixel") { toInt().coerceAtLeast(1) }.default(500)
   val timer by parser.storing(
     "-t", "--timer",
     help = "Enable the regen of the maze after the value specified in seconds"
   ) { toLong() }.default(-1)
   val blanking by parser.flagging("--blank", help = "Enables blanking before redraw").default(false)
   val cellSize by parser.storing("-c", "--cellsize", help = "The size inside a maze cell") { toInt() }.default(8)
+  val drawMarker by parser.flagging("--draw-marker", help = "Draw start and target point in the maze.").default(false)
+  val centerTarget by parser.flagging("--center-target", help = "Positions the target point in the center").default(false)
 }

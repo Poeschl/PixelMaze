@@ -17,10 +17,13 @@ import kotlin.math.min
 class Maze(
   private val origin: Point,
   private val mazeSize: Pair<Int, Int>,
-  private val pathSize: Int
+  private val pathSize: Int,
+  private val drawMarker: Boolean = false,
+  private val centeredTarget: Boolean = false
 ) {
 
   companion object {
+    private val LOGGER = KotlinLogging.logger { }
     private val VISUAL_LOGGER = KotlinLogging.logger("visualDebug")
     private val DEBUG = VISUAL_LOGGER.isDebugEnabled
     private const val BORDER_WIDTH = 1
@@ -34,9 +37,21 @@ class Maze(
   private var shadowMatrix = PixelMatrix(mazeSize.first, mazeSize.second)
   var mazeSet = setOf<Pixel>()
 
+  init {
+    if (drawMarker) {
+      LOGGER.info { "Drawing start and target marker" }
+      if (centeredTarget) {
+        LOGGER.info { "Draw target at the center" }
+      }
+    }
+  }
+
   fun updateMaze(edges: Stream<Edge>) {
     createGrid()
     edges.parallel().forEach { createEdges(it) }
+    if (drawMarker) {
+      createMarkers()
+    }
     mazeSet = shadowMatrix.getPixelSet().map { Pixel(it.point.plus(origin), it.color) }.toSet()
     shadowMatrix = PixelMatrix(mazeSize.first, mazeSize.second)
   }
@@ -102,6 +117,33 @@ class Maze(
         shadowMatrix.insert(Pixel(wallPoint, Color.RED))
       }
     }
+  }
+
+  private fun createMarkers() {
+    runBlocking {
+      launch {
+        val start = Point(0, 0)
+        createPixelCellMarker(start, Color.CYAN).forEach { shadowMatrix.insert(it) }
+      }
+      launch {
+        val target = if (centeredTarget) {
+          Point(widthInCells / 2, heightInCells / 2)
+        } else {
+          Point(widthInCells - 1, heightInCells - 1)
+        }
+        createPixelCellMarker(target, Color.MAGENTA).forEach { shadowMatrix.insert(it) }
+      }
+    }
+  }
+
+  private fun createPixelCellMarker(point: Point, color: Color): Stream<Pixel> {
+    val cellInsideOrigin = Point(point.x * cellSize + 1, point.y * cellSize + 1)
+    return IntStream.rangeClosed(cellInsideOrigin.x, cellInsideOrigin.x + pathSize)
+      .mapToObj { x ->
+        IntStream.rangeClosed(cellInsideOrigin.y, cellInsideOrigin.y + pathSize)
+          .mapToObj { y -> Pixel(Point(x, y), color) }.toList()
+      }
+      .flatMap { it.stream() }
   }
 
   private fun getOriginPointOfCell(index: Int): Point {

@@ -148,14 +148,87 @@ class MazeTest {
             Pixel(Point(1, 6), Color.WHITE),
             Pixel(Point(2, 6), Color.WHITE),
             Pixel(Point(3, 6), Color.WHITE),
-            Pixel(Point(4, 6), Color.WHITE),
-            Pixel(Point(5, 6), Color.WHITE),
-            Pixel(Point(6, 6), Color.WHITE),
-            Pixel(Point(7, 6), Color.WHITE),
-            Pixel(Point(8, 6), Color.WHITE),
-            Pixel(Point(9, 6), Color.WHITE),
-            Pixel(Point(10, 6), Color.WHITE),
-            Pixel(Point(11, 6), Color.WHITE)
+          Pixel(Point(4, 6), Color.WHITE),
+          Pixel(Point(5, 6), Color.WHITE),
+          Pixel(Point(6, 6), Color.WHITE),
+          Pixel(Point(7, 6), Color.WHITE),
+          Pixel(Point(8, 6), Color.WHITE),
+          Pixel(Point(9, 6), Color.WHITE),
+          Pixel(Point(10, 6), Color.WHITE),
+          Pixel(Point(11, 6), Color.WHITE)
         )
     }
+
+  @Test
+  internal fun testMarkerInMaze() {
+    // WHEN
+    val edges: Set<Edge> = setOf(
+      UndirectedEdge(0, 1),
+      UndirectedEdge(0, 2),
+      UndirectedEdge(1, 3)
+    )
+
+    // *******
+    // *0 *1 *
+    // *  *  *
+    // *******
+    // *2 *3 *
+    // *  *  *
+    // ******
+
+    val maze = Maze(Point(0, 0), Pair(6, 6), 1, drawMarker = true, centeredTarget = false)
+
+    // THEN
+    maze.updateMaze(edges.stream())
+
+    // *******
+    // *--   *
+    // *--   *
+    // *  *  *
+    // *  *++*
+    // *  *++*
+    // ******
+
+    // VERIFY
+    val pixels = maze.mazeSet
+    assertThat(pixels).containsExactlyInAnyOrder(
+      Pixel(Point(0, 0), Color.WHITE),
+      Pixel(Point(1, 0), Color.WHITE),
+      Pixel(Point(2, 0), Color.WHITE),
+      Pixel(Point(3, 0), Color.WHITE),
+      Pixel(Point(4, 0), Color.WHITE),
+      Pixel(Point(5, 0), Color.WHITE),
+      Pixel(Point(6, 0), Color.WHITE),
+      Pixel(Point(0, 1), Color.WHITE),
+      Pixel(Point(6, 1), Color.WHITE),
+      Pixel(Point(0, 2), Color.WHITE),
+      Pixel(Point(6, 2), Color.WHITE),
+      Pixel(Point(0, 3), Color.WHITE),
+      Pixel(Point(3, 3), Color.WHITE),
+      Pixel(Point(6, 3), Color.WHITE),
+      Pixel(Point(0, 4), Color.WHITE),
+      Pixel(Point(3, 4), Color.WHITE),
+      Pixel(Point(6, 4), Color.WHITE),
+      Pixel(Point(0, 5), Color.WHITE),
+      Pixel(Point(3, 5), Color.WHITE),
+      Pixel(Point(6, 5), Color.WHITE),
+      Pixel(Point(0, 6), Color.WHITE),
+      Pixel(Point(1, 6), Color.WHITE),
+      Pixel(Point(2, 6), Color.WHITE),
+      Pixel(Point(3, 6), Color.WHITE),
+      Pixel(Point(4, 6), Color.WHITE),
+      Pixel(Point(5, 6), Color.WHITE),
+
+      Pixel(Point(1, 1), Color.CYAN),
+      Pixel(Point(2, 1), Color.CYAN),
+      Pixel(Point(1, 2), Color.CYAN),
+      Pixel(Point(2, 2), Color.CYAN),
+
+      Pixel(Point(4, 4), Color.MAGENTA),
+      Pixel(Point(5, 4), Color.MAGENTA),
+      Pixel(Point(4, 5), Color.MAGENTA),
+      Pixel(Point(5, 5), Color.MAGENTA),
+    )
+  }
+
 }
