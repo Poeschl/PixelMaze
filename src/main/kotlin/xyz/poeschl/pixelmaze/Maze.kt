@@ -13,13 +13,15 @@ import java.util.stream.IntStream
 import java.util.stream.Stream
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.random.Random
 
 class Maze(
   private val origin: Point,
   private val mazeSize: Pair<Int, Int>,
   private val pathSize: Int,
   private val drawMarker: Boolean = false,
-  private val centeredTarget: Boolean = false
+  private val centeredTarget: Boolean = false,
+  private val randomHoles: Boolean = false
 ) {
 
   companion object {
@@ -28,6 +30,9 @@ class Maze(
     private val DEBUG = VISUAL_LOGGER.isDebugEnabled
     private const val BORDER_WIDTH = 1
     private val WALL_COLOR = Color.WHITE
+    private val START_COLOR = Color.CYAN
+    private val TARGET_COLOR = Color.MAGENTA
+    private const val HOLE_RANDOM_POINTS_PERCENTAGE = 0.1
   }
 
   private val cellSize = pathSize + BORDER_WIDTH * 2
@@ -51,6 +56,9 @@ class Maze(
     edges.parallel().forEach { createEdges(it) }
     if (drawMarker) {
       createMarkers()
+    }
+    if (randomHoles) {
+      generateRandomHoles()
     }
     mazeSet = shadowMatrix.getPixelSet().map { Pixel(it.point.plus(origin), it.color) }.toSet()
     shadowMatrix = PixelMatrix(mazeSize.first, mazeSize.second)
@@ -89,6 +97,21 @@ class Maze(
     }
   }
 
+  private fun generateRandomHoles() {
+    val randomPoints = heightInCells * widthInCells * HOLE_RANDOM_POINTS_PERCENTAGE
+    (0..randomPoints.toInt()).forEach { _ ->
+      val point = Point(
+        Random.nextInt(widthInCells - 1) * cellSize,
+        Random.nextInt(heightInCells - 1) * cellSize
+      )
+
+      when (Random.nextBoolean()) {
+        true -> removeHorizontalBorderToRightOf(point, Color.BLUE)
+        false -> removeVerticalBorderToBottomOf(point, Color.BLUE)
+      }
+    }
+  }
+
   private fun createEdges(edge: Edge) {
     val from = getOriginPointOfCell(min(edge.either(), edge.other()))
     val to = getOriginPointOfCell(max(edge.either(), edge.other()))
@@ -99,22 +122,22 @@ class Maze(
     }
   }
 
-  private fun removeVerticalBorderToBottomOf(from: Point) {
+  private fun removeVerticalBorderToBottomOf(from: Point, debugColor: Color = Color.RED) {
     for (yOffset in 0..pathSize) {
       val wallPoint = from.plus(Point(cellSize, BORDER_WIDTH + yOffset))
       shadowMatrix.remove(wallPoint)
       if (DEBUG) {
-        shadowMatrix.insert(Pixel(wallPoint, Color.RED))
+        shadowMatrix.insert(Pixel(wallPoint, debugColor))
       }
     }
   }
 
-  private fun removeHorizontalBorderToRightOf(from: Point) {
+  private fun removeHorizontalBorderToRightOf(from: Point, debugColor: Color = Color.RED) {
     for (xOffset in 0..pathSize) {
       val wallPoint = from.plus(Point(BORDER_WIDTH + xOffset, cellSize))
       shadowMatrix.remove(wallPoint)
       if (DEBUG) {
-        shadowMatrix.insert(Pixel(wallPoint, Color.RED))
+        shadowMatrix.insert(Pixel(wallPoint, debugColor))
       }
     }
   }
@@ -123,7 +146,7 @@ class Maze(
     runBlocking {
       launch {
         val start = Point(0, 0)
-        createPixelCellMarker(start, Color.CYAN).forEach { shadowMatrix.insert(it) }
+        createPixelCellMarker(start, START_COLOR).forEach { shadowMatrix.insert(it) }
       }
       launch {
         val target = if (centeredTarget) {
@@ -131,7 +154,7 @@ class Maze(
         } else {
           Point(widthInCells - 1, heightInCells - 1)
         }
-        createPixelCellMarker(target, Color.MAGENTA).forEach { shadowMatrix.insert(it) }
+        createPixelCellMarker(target, TARGET_COLOR).forEach { shadowMatrix.insert(it) }
       }
     }
   }

@@ -21,7 +21,7 @@ import kotlin.system.measureTimeMillis
 fun main(args: Array<String>) = mainBody {
   ArgParser(args).parseInto(::Args).run {
     println("Start drawing on $host:$port")
-    LabyrinthDrawer(host, port, x, y, width, height, timer, blanking, cellSize, drawMarker, centerTarget).start()
+    LabyrinthDrawer(host, port, x, y, width, height, timer, blanking, cellSize, drawMarker, centerTarget, randomHoles).start()
   }
 }
 
@@ -36,7 +36,8 @@ class LabyrinthDrawer(
   private val blanking: Boolean,
   cellSize: Int,
   drawMarker: Boolean,
-  centerTarget: Boolean
+  centerTarget: Boolean,
+  randomHoles: Boolean
 ) : Painter() {
   companion object {
     private val LOGGER = KotlinLogging.logger { }
@@ -47,12 +48,11 @@ class LabyrinthDrawer(
   private val daemonTimer = Timer(true)
   private val size = Pair(width, height)
   private val origin = Point(xStart, yStart)
-  private val maze = Maze(origin, size, cellSize, drawMarker, centerTarget)
+  private val maze = Maze(origin, size, cellSize, drawMarker, centerTarget, randomHoles)
 
   private var genTimer: TimerTask? = null
 
   override fun init() {
-    LOGGER.info { }
     generateMazePixels()
     if (timer > 0) {
       setTimerTime(timer)
@@ -123,4 +123,6 @@ class Args(parser: ArgParser) {
   val cellSize by parser.storing("-c", "--cellsize", help = "The size inside a maze cell") { toInt() }.default(8)
   val drawMarker by parser.flagging("--draw-marker", help = "Draw start and target point in the maze.").default(false)
   val centerTarget by parser.flagging("--center-target", help = "Positions the target point in the center").default(false)
+  val randomHoles by parser.flagging("--random-holes", "--horns-of-jericho", help = "Break some random holes into the maze")
+    .default(false)
 }
