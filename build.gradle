@@ -26,7 +26,7 @@ dependencies {
   implementation 'io.github.microutils:kotlin-logging-jvm:3.0.4'
   implementation 'ch.qos.logback:logback-classic:1.4.5'
   implementation 'com.xenomachina:kotlin-argparser:2.0.7'
-  implementation 'xyz.poeschl:Kixelflut:2.0.1'
+  implementation 'xyz.poeschl:Kixelflut:2.1.0'
   implementation files('libs/SwingMazeDemo-0.0.1-SNAPSHOT-jar-with-dependencies-2020-03-06.jar')
 
   testImplementation(platform('org.junit:junit-bom:5.9.3'))
