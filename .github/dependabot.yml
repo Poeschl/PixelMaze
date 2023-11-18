@@ -8,7 +8,7 @@ updates:
       GH actions:
         dependency-type: "production"
   - package-ecosystem: "gradle"
-    directory: "/backend"
+    directory: "/"
     schedule:
       interval: "monthly"
     groups:
