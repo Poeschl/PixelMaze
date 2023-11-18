@@ -1,15 +1,18 @@
 version: 2
 updates:
-  # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-    labels:
-      - "dependency-update"
+      interval: "monthly"
+    groups:
+      GH actions:
+        dependency-type: "production"
   - package-ecosystem: "gradle"
-    directory: "/"
+    directory: "/backend"
     schedule:
-      interval: "weekly"
-    labels:
-      - "dependency-update"
+      interval: "monthly"
+    groups:
+      gradle:
+        dependency-type: "production"
+      gradle dev:
+        dependency-type: "development"
