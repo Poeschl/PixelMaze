@@ -6,9 +6,9 @@ buildscript {
 
 plugins {
   id 'java'
-  id "org.jetbrains.kotlin.jvm" version "1.8.22"
+  id "org.jetbrains.kotlin.jvm" version "1.9.20"
   id 'idea'
-  id 'com.github.johnrengelman.shadow' version '7.1.2'
+  id 'com.github.johnrengelman.shadow' version '8.1.1'
   id 'net.researchgate.release' version '3.0.2'
 }
 
@@ -22,16 +22,16 @@ repositories {
 
 dependencies {
   implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1'
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
   implementation 'io.github.microutils:kotlin-logging-jvm:3.0.5'
-  implementation 'ch.qos.logback:logback-classic:1.4.5'
+  implementation 'ch.qos.logback:logback-classic:1.4.11'
   implementation 'com.xenomachina:kotlin-argparser:2.0.7'
   implementation 'xyz.poeschl:Kixelflut:2.1.0'
   implementation files('libs/SwingMazeDemo-0.0.1-SNAPSHOT-jar-with-dependencies-2020-03-06.jar')
 
-  testImplementation(platform('org.junit:junit-bom:5.9.3'))
+  testImplementation(platform('org.junit:junit-bom:5.10.1'))
   testImplementation 'org.junit.jupiter:junit-jupiter'
-  testImplementation 'com.willowtreeapps.assertk:assertk-jvm:0.26.1'
+  testImplementation 'com.willowtreeapps.assertk:assertk-jvm:0.27.0'
 }
 
 
