@@ -6,7 +6,7 @@ buildscript {
 
 plugins {
   id 'java'
-  id "org.jetbrains.kotlin.jvm" version "1.9.23"
+  id "org.jetbrains.kotlin.jvm" version "2.0.0"
   id 'idea'
   id 'com.github.johnrengelman.shadow' version '8.1.1'
   id 'net.researchgate.release' version '3.0.2'
@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
   implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0'
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1'
   implementation 'io.github.microutils:kotlin-logging-jvm:3.0.5'
   implementation 'ch.qos.logback:logback-classic:1.5.6'
   implementation 'com.xenomachina:kotlin-argparser:2.0.7'
